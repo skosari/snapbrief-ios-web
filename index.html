@@ -3,208 +3,434 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SnapBrief for iPhone</title>
-  <meta name="description" content="Capture text from anything on your iPhone. On-device OCR — nothing ever leaves your device.">
+  <title>SnapBrief for iPhone &amp; iPad — Snap. Search. Know.</title>
+  <meta name="description" content="Capture from camera, scanner, or clipboard. On-device OCR, rich notes, and seamless iCloud sync with your Mac. Built for iPhone and iPad.">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-      background: #050505;
-      color: #fff;
-      -webkit-font-smoothing: antialiased;
+    :root {
+      --grad: linear-gradient(135deg, #00d9ff 0%, #3370ff 25%, #8c2ee6 52%, #f251a0 75%, #ff9e2d 100%);
+      --text: #f5f5f7;
+      --text-2: rgba(245,245,247,0.62);
+      --text-3: rgba(245,245,247,0.34);
+      --border: rgba(255,255,255,0.1);
+      --card: rgba(255,255,255,0.05);
     }
-    a { text-decoration: none; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+      background: #000;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
 
     /* ── Nav ── */
     nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 28px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 52px;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
+    .nav-logo { display: flex; align-items: center; gap: 9px; }
     .nav-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 7px;
-      background: linear-gradient(135deg, #00d9ff 0%, #3370ff 25%, #8c2ee6 52%, #f251a0 75%, #ff9e2d 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 28px; height: 28px; border-radius: 7px;
+      background: var(--grad);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .nav-name {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-      background: linear-gradient(135deg, #00d9ff, #3370ff, #8c2ee6, #f251a0, #ff9e2d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 15px; font-weight: 600; letter-spacing: -0.3px;
+      background: var(--grad);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .nav-mac {
-      font-size: 13px;
-      color: rgba(255,255,255,0.35);
+    .nav-right { display: flex; align-items: center; gap: 24px; font-size: 13px; }
+    .nav-link { color: var(--text-2); transition: color .15s; }
+    .nav-link:hover { color: var(--text); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fff; color: #000;
+      padding: 7px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 600;
+      transition: opacity .15s, transform .15s;
     }
-    .nav-mac a { color: rgba(255,255,255,0.45); }
-    .nav-mac a:hover { color: rgba(255,255,255,0.7); }
+    .nav-cta:hover { opacity: .85; transform: scale(1.02); }
 
     /* ── Hero ── */
     .hero {
-      padding: 88px 24px 64px;
-      text-align: center;
+      min-height: 100svh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 100px 24px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% -5%, rgba(242,81,160,.18) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 30% at 15% 85%, rgba(0,217,255,.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 85% 75%, rgba(140,46,230,.1) 0%, transparent 60%);
+      animation: glow-breathe 6s ease-in-out infinite;
+    }
+    @keyframes glow-breathe { 0%,100%{opacity:.8} 50%{opacity:1} }
+
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 36px;
     }
     .app-icon {
-      width: 112px;
-      height: 112px;
-      border-radius: 26px;
-      background: linear-gradient(135deg, #00d9ff 0%, #3370ff 25%, #8c2ee6 52%, #f251a0 75%, #ff9e2d 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 28px;
-      box-shadow: 0 16px 56px rgba(140, 46, 230, 0.4), 0 4px 16px rgba(0,0,0,0.4);
+      width: 100px; height: 100px; border-radius: 23px;
+      background: var(--grad);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 36px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 24px 64px rgba(242,81,160,.4);
     }
     h1 {
-      font-size: clamp(42px, 9vw, 72px);
-      font-weight: 700;
-      letter-spacing: -3px;
-      line-height: 1;
-      background: linear-gradient(135deg, #00d9ff, #3370ff, #8c2ee6, #f251a0, #ff9e2d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: clamp(56px, 11vw, 100px);
+      font-weight: 700; letter-spacing: -5px; line-height: .92;
+      background: var(--grad);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .platform {
-      font-size: 20px;
-      color: rgba(255,255,255,0.3);
-      font-weight: 400;
-      letter-spacing: -0.3px;
-      margin-top: 6px;
-      margin-bottom: 22px;
+    .hero-sub {
+      font-size: clamp(17px, 2.8vw, 22px);
+      color: var(--text-2); max-width: 520px;
+      margin: 28px auto 52px;
+      line-height: 1.55; letter-spacing: -.3px;
     }
-    .tagline {
-      font-size: clamp(16px, 3.5vw, 21px);
-      color: rgba(255,255,255,0.55);
-      max-width: 400px;
-      margin: 0 auto 44px;
-      line-height: 1.55;
-    }
-
-    /* ── App Store badge ── */
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: #fff;
-      color: #000;
-      padding: 13px 26px;
-      border-radius: 16px;
-      transition: opacity 0.15s, transform 0.15s;
+      display: inline-flex; align-items: center; gap: 12px;
+      background: #fff; color: #000;
+      padding: 12px 26px; border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+      transition: opacity .15s, transform .15s;
     }
-    .badge:hover { opacity: 0.87; transform: translateY(-2px); }
+    .badge:hover { opacity: .88; transform: translateY(-2px); }
     .badge-text { display: flex; flex-direction: column; align-items: flex-start; }
-    .badge-text .small { font-size: 11px; font-weight: 400; opacity: 0.6; line-height: 1; }
-    .badge-text .big { font-size: 19px; font-weight: 700; line-height: 1.25; }
+    .badge-text .small { font-size: 11px; opacity: .5; line-height: 1; }
+    .badge-text .big { font-size: 18px; font-weight: 700; line-height: 1.25; }
 
-    /* ── Features ── */
-    .features {
-      max-width: 880px;
-      margin: 80px auto 0;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
-      gap: 16px;
-    }
-    .feat {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 20px;
-      padding: 28px 22px;
-    }
-    .feat-icon { font-size: 30px; margin-bottom: 14px; }
-    .feat h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: rgba(255,255,255,0.9); }
-    .feat p { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.65; }
+    /* ── Sections ── */
+    .sep { border-top: 1px solid rgba(255,255,255,.06); max-width: 1100px; margin: 0 auto; }
 
-    /* ── Privacy note ── */
-    .privacy-note {
-      max-width: 560px;
-      margin: 56px auto 0;
-      padding: 22px 28px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px;
-      text-align: center;
-      font-size: 13px;
-      color: rgba(255,255,255,0.35);
-      line-height: 1.7;
-      margin-left: auto;
-      margin-right: auto;
+    .feat-row {
+      max-width: 1100px; margin: 0 auto; padding: 100px 48px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
     }
-    .privacy-note a { color: rgba(255,255,255,0.5); }
-    .privacy-note a:hover { color: rgba(255,255,255,0.75); }
+    .feat-row.reverse .feat-text { order: 2; }
+    .feat-row.reverse .feat-visual { order: 1; }
+
+    .feat-eyebrow {
+      font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      background: var(--grad);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 14px; display: inline-block;
+    }
+    .feat-text h2 {
+      font-size: clamp(28px, 3.8vw, 46px);
+      font-weight: 700; letter-spacing: -2px; line-height: 1.08;
+      color: var(--text); margin-bottom: 18px;
+    }
+    .feat-text p { font-size: 17px; color: var(--text-2); line-height: 1.7; letter-spacing: -.1px; }
+    .feat-text p + p { margin-top: 12px; }
+    .feat-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .chip {
+      font-size: 12px; color: var(--text-2);
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px; padding: 5px 13px;
+    }
+
+    /* ── Visual panels ── */
+    .feat-visual {
+      border-radius: 24px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,.1);
+      aspect-ratio: 1; display: flex; flex-direction: column;
+      align-items: stretch; justify-content: center;
+    }
+    .v-capture { background: linear-gradient(160deg, #070f24 0%, #030810 100%); }
+    .v-ipad    { background: linear-gradient(160deg, #0a0b1e 0%, #050612 100%); }
+    .v-sync    { background: linear-gradient(160deg, #07151e 0%, #020a0d 100%); }
+    .v-brief   { background: linear-gradient(160deg, #0f0d20 0%, #070612 100%); }
+
+    /* ── Capture mockup: Phone + capture options ── */
+    .mock-phone-frame {
+      margin: 24px auto;
+      width: 80px; height: 140px;
+      border: 2px solid rgba(255,255,255,.2);
+      border-radius: 18px;
+      background: rgba(0,0,0,.5);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mock-phone-camera {
+      position: absolute; top: 8px; left: 50%;
+      transform: translateX(-50%);
+      width: 16px; height: 4px;
+      border-radius: 2px; background: rgba(255,255,255,.2);
+    }
+    .mock-viewfinder {
+      width: 54px; height: 54px;
+      border: 1.5px solid rgba(255,255,255,.5);
+      border-radius: 3px; position: relative;
+    }
+    .mock-viewfinder::before, .mock-viewfinder::after {
+      content: '';
+      position: absolute;
+      width: 10px; height: 10px;
+    }
+    .mock-viewfinder::before {
+      top: -2px; left: -2px;
+      border-top: 2px solid rgba(0,217,255,.8);
+      border-left: 2px solid rgba(0,217,255,.8);
+    }
+    .mock-viewfinder::after {
+      bottom: -2px; right: -2px;
+      border-bottom: 2px solid rgba(0,217,255,.8);
+      border-right: 2px solid rgba(0,217,255,.8);
+    }
+    .capture-options {
+      display: flex; flex-direction: column; gap: 8px; padding: 24px 24px 24px 20px; flex: 1; justify-content: center;
+    }
+    .capture-opt {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--text-2);
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 9px 12px;
+    }
+    .capture-opt-icon { font-size: 16px; }
+
+    /* ── iPad landscape mockup ── */
+    .mock-ipad-wrap {
+      padding: 20px; display: flex; align-items: center; justify-content: center; height: 100%;
+    }
+    .mock-ipad-landscape {
+      width: 100%; max-width: 320px;
+      border: 2px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+      background: #0a0a0a; overflow: hidden;
+    }
+    .mock-ipad-status {
+      height: 22px; background: rgba(255,255,255,.04);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      display: flex; align-items: center; padding: 0 12px;
+      gap: 4px;
+    }
+    .mock-ipad-status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+    }
+    .mock-ipad-body {
+      display: grid; grid-template-columns: 90px 1fr;
+      height: 160px;
+    }
+    .mock-ipad-sidebar {
+      border-right: 1px solid rgba(255,255,255,.07);
+      padding: 8px;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .mock-ipad-row {
+      height: 22px; border-radius: 5px;
+      background: rgba(255,255,255,.07);
+      display: flex; align-items: center; padding: 0 7px;
+    }
+    .mock-ipad-row.active { background: rgba(51,112,255,.2); border: 1px solid rgba(51,112,255,.3); }
+    .mock-ipad-row-thumb {
+      width: 14px; height: 14px; border-radius: 3px;
+      background: rgba(255,255,255,.15); flex-shrink: 0; margin-right: 5px;
+    }
+    .mock-ipad-row-line {
+      height: 6px; border-radius: 3px; background: rgba(255,255,255,.15); flex: 1;
+    }
+    .mock-ipad-detail {
+      padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .mock-ipad-img {
+      height: 52px; border-radius: 7px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    }
+    .mock-ipad-text-lines { display: flex; flex-direction: column; gap: 5px; }
+    .mock-ipad-text-line {
+      height: 7px; border-radius: 4px; background: rgba(255,255,255,.1);
+    }
+
+    /* ── Sync mockup ── */
+    .mock-sync { padding: 32px; display: flex; align-items: center; justify-content: center; gap: 0; height: 100%; }
+    .mock-sync-device { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .mock-device-box {
+      border-radius: 14px; background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
+    }
+    .mock-device-box.mac-box { width: 72px; height: 54px; border-radius: 8px; }
+    .mock-device-box.phone-box { width: 42px; height: 72px; border-radius: 10px; }
+    .mock-device-label { font-size: 11px; color: var(--text-3); }
+    .mock-sync-arrow {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      padding: 0 16px;
+    }
+    .mock-cloud-box {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .mock-sync-line {
+      height: 1px; width: 100%;
+      background: linear-gradient(90deg, rgba(242,81,160,.5), rgba(140,46,230,.5));
+    }
+
+    /* ── Brief mockup ── */
+    .mock-brief { padding: 20px; display: flex; flex-direction: column; gap: 10px; height: 100%; justify-content: center; }
+    .mock-brief-snap-thumb {
+      height: 52px; border-radius: 8px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--text-3);
+    }
+    .mock-brief-divider { height: 1px; background: rgba(255,255,255,.08); }
+    .mock-brief-heading {
+      font-size: 13px; font-weight: 600; color: rgba(255,255,255,.85);
+    }
+    .mock-brief-bullets { display: flex; flex-direction: column; gap: 5px; padding-left: 4px; }
+    .mock-brief-bullet { display: flex; align-items: flex-start; gap: 7px; }
+    .mock-brief-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.4); flex-shrink: 0; margin-top: 5px; }
+    .mock-brief-line { height: 7px; border-radius: 4px; background: rgba(255,255,255,.12); flex: 1; }
+    .mock-brief-highlight {
+      background: rgba(255,210,0,.12); border: 1px solid rgba(255,210,0,.2);
+      border-radius: 5px; padding: 6px 10px;
+      height: 7px; width: 75%; border-radius: 4px;
+    }
+
+    /* ── Features Grid ── */
+    .features-section { max-width: 1100px; margin: 0 auto; padding: 100px 48px; }
+    .features-section > h2 {
+      font-size: clamp(28px, 3.8vw, 46px);
+      font-weight: 700; letter-spacing: -2px; margin-bottom: 48px; color: var(--text);
+    }
+    .grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .g-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 28px 24px;
+      transition: border-color .2s, background .2s;
+    }
+    .g-card:hover { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.07); }
+    .g-icon { font-size: 28px; display: block; margin-bottom: 16px; }
+    .g-card h3 { font-size: 15px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 8px; }
+    .g-card p { font-size: 13.5px; color: var(--text-2); line-height: 1.65; }
+
+    /* ── Privacy ── */
+    .privacy-section {
+      background: rgba(255,255,255,.025);
+      border-top: 1px solid rgba(255,255,255,.07);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      padding: 100px 48px; text-align: center;
+    }
+    .privacy-section h2 {
+      font-size: clamp(24px, 3.8vw, 44px);
+      font-weight: 700; letter-spacing: -2px; margin-bottom: 18px;
+    }
+    .privacy-section p {
+      font-size: 17px; color: var(--text-2);
+      max-width: 560px; margin: 0 auto 32px; line-height: 1.65;
+    }
+    .privacy-link {
+      color: rgba(255,255,255,.5); font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,.2); padding-bottom: 1px;
+      transition: color .15s;
+    }
+    .privacy-link:hover { color: rgba(255,255,255,.8); }
+
+    /* ── Also ── */
+    .also-section { padding: 80px 24px; text-align: center; }
+    .also-section p { font-size: 14px; color: var(--text-3); margin-bottom: 20px; }
+    .also-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      padding: 12px 22px; border-radius: 14px;
+      font-size: 14px; font-weight: 500;
+      transition: background .15s;
+    }
+    .also-badge:hover { background: rgba(255,255,255,.09); }
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid rgba(255,255,255,0.06);
-      margin-top: 80px;
-      padding: 28px 24px;
-      text-align: center;
-      font-size: 13px;
-      color: rgba(255,255,255,0.2);
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding: 32px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
     }
-    footer a { color: rgba(255,255,255,0.3); }
-    footer a:hover { color: rgba(255,255,255,0.6); }
+    footer .fl { font-size: 13px; color: var(--text-3); }
+    footer .fr { display: flex; gap: 24px; font-size: 13px; }
+    footer .fr a { color: var(--text-3); transition: color .15s; }
+    footer .fr a:hover { color: var(--text-2); }
 
-    @media (max-width: 480px) {
-      .hero { padding: 56px 20px 48px; }
-      h1 { letter-spacing: -2px; }
+    /* ── Reveal ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 840px) {
+      .feat-row { grid-template-columns: 1fr; gap: 40px; padding: 72px 28px; }
+      .feat-row.reverse .feat-text { order: 1; }
+      .feat-row.reverse .feat-visual { order: 2; }
+      .feat-visual { aspect-ratio: 4/3; }
+      .grid-6 { grid-template-columns: repeat(2, 1fr); }
+      .features-section, .privacy-section { padding: 72px 28px; }
+      footer { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
+      nav { padding: 0 16px; }
+    }
+    @media (max-width: 520px) {
+      .grid-6 { grid-template-columns: 1fr; }
+      h1 { letter-spacing: -3px; }
+      .nav-right .nav-link { display: none; }
     }
   </style>
 </head>
 <body>
 
+<!-- ── Nav ── -->
 <nav>
   <div class="nav-logo">
     <div class="nav-icon">
-      <svg width="18" height="18" viewBox="0 0 48 48" fill="none">
-        <rect x="7" y="3" width="25" height="35" rx="3" fill="white" opacity="0.95"/>
-        <path d="M25 3 L32 10 L25 10 Z" fill="white" opacity="0.5"/>
-        <path d="M14 16 L14 12 L18 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M25 12 L29 12 L29 16" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M14 26 L14 30 L18 30" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M25 30 L29 30 L29 26" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M5 3h10l4 4v14a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" fill="white" opacity=".9"/>
+        <path d="M15 3v4h4" fill="white" opacity=".45"/>
+        <path d="M8 10h8M8 13h5" stroke="rgba(0,0,0,.35)" stroke-width="1.4" stroke-linecap="round"/>
+        <rect x="14" y="14" width="6" height="6" rx="1.5" stroke="white" stroke-width="1.5" fill="none" opacity=".85"/>
+        <path d="M13 13l-1.5-1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>
       </svg>
     </div>
     <span class="nav-name">SnapBrief</span>
   </div>
-  <span class="nav-mac">Also available for <a href="https://skosari.github.io/snapbrief-mac-web/">Mac →</a></span>
+  <div class="nav-right">
+    <a class="nav-link" href="https://skosari.github.io/snapbrief-mac-web/">Mac →</a>
+    <a class="nav-cta" href="https://apps.apple.com/search?term=snapbrief">
+      <svg width="14" height="17" viewBox="0 0 22 26" fill="none">
+        <path d="M18.475 13.818c-.032-3.44 2.812-5.094 2.94-5.173-1.603-2.34-4.094-2.66-4.976-2.69-2.11-.215-4.13 1.25-5.2 1.25-1.07 0-2.71-1.225-4.465-1.19-2.29.035-4.41 1.345-5.59 3.39-2.395 4.145-.615 10.285 1.715 13.65 1.14 1.645 2.49 3.49 4.26 3.425 1.72-.07 2.365-1.1 4.445-1.1 2.08 0 2.67 1.1 4.465 1.065 1.845-.03 3.01-1.67 4.14-3.32 1.305-1.9 1.84-3.74 1.865-3.835-.04-.015-3.575-1.37-3.61-5.472zM14.985 3.86C15.925 2.715 16.565 1.13 16.38 0c-1.39.06-3.075.93-4.07 2.045-.895 1-1.675 2.635-1.465 4.185 1.545.12 3.12-.79 4.14-2.37z" fill="black"/>
+      </svg>
+      App Store
+    </a>
+  </div>
 </nav>
 
 <main>
+
+  <!-- ── Hero ── -->
   <section class="hero">
+    <div class="hero-glow"></div>
+    <p class="hero-eyebrow">SnapBrief for iPhone &amp; iPad</p>
     <div class="app-icon">
-      <svg width="58" height="58" viewBox="0 0 48 48" fill="none">
-        <rect x="7" y="3" width="25" height="35" rx="3" fill="white" opacity="0.95"/>
-        <path d="M25 3 L32 10 L25 10 Z" fill="white" opacity="0.5"/>
-        <path d="M14 16 L14 12 L18 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M25 12 L29 12 L29 16" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M14 26 L14 30 L18 30" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M25 30 L29 30 L29 26" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="21.5" cy="21" r="1.5" fill="white" opacity="0.65"/>
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none">
+        <path d="M5 3h10l4 4v14a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" fill="white" opacity=".9"/>
+        <path d="M15 3v4h4" fill="white" opacity=".45"/>
+        <path d="M8 10h8M8 13h5" stroke="rgba(0,0,0,.3)" stroke-width="1.3" stroke-linecap="round"/>
+        <rect x="14" y="14" width="6" height="6" rx="1.5" stroke="white" stroke-width="1.5" fill="none" opacity=".85"/>
+        <path d="M13 13l-1.5-1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>
       </svg>
     </div>
-
-    <h1>SnapBrief</h1>
-    <p class="platform">for iPhone</p>
-    <p class="tagline">Capture text from anything. Instant on-device OCR, beautifully organized.</p>
-
+    <h1>Snap.<br>Search.<br>Know.</h1>
+    <p class="hero-sub">Capture anything with your camera, document scanner, or clipboard. On-device OCR reads the text instantly — and your notes sync across all your Apple devices.</p>
     <a class="badge" href="https://apps.apple.com/search?term=snapbrief">
-      <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+      <svg width="20" height="24" viewBox="0 0 22 26" fill="none">
         <path d="M18.475 13.818c-.032-3.44 2.812-5.094 2.94-5.173-1.603-2.34-4.094-2.66-4.976-2.69-2.11-.215-4.13 1.25-5.2 1.25-1.07 0-2.71-1.225-4.465-1.19-2.29.035-4.41 1.345-5.59 3.39-2.395 4.145-.615 10.285 1.715 13.65 1.14 1.645 2.49 3.49 4.26 3.425 1.72-.07 2.365-1.1 4.445-1.1 2.08 0 2.67 1.1 4.465 1.065 1.845-.03 3.01-1.67 4.14-3.32 1.305-1.9 1.84-3.74 1.865-3.835-.04-.015-3.575-1.37-3.61-5.472zM14.985 3.86C15.925 2.715 16.565 1.13 16.38 0c-1.39.06-3.075.93-4.07 2.045-.895 1-1.675 2.635-1.465 4.185 1.545.12 3.12-.79 4.14-2.37z" fill="black"/>
       </svg>
       <div class="badge-text">
@@ -214,38 +440,243 @@
     </a>
   </section>
 
-  <section class="features">
-    <div class="feat">
-      <div class="feat-icon">📷</div>
-      <h3>Instant Capture</h3>
-      <p>Snap a photo, scan a document, or import from your Photos library. OCR runs instantly.</p>
+  <div class="sep"></div>
+
+  <!-- ── Capture ── -->
+  <section class="feat-row reveal">
+    <div class="feat-text">
+      <span class="feat-eyebrow">Capture</span>
+      <h2>Four ways to capture. One place for everything.</h2>
+      <p>Point your camera at a whiteboard, business card, printed report, or receipt. SnapBrief's document scanner flattens and corrects the image, then extracts every word in under a second.</p>
+      <p>Or paste from your clipboard — screenshots, copied images, whatever you're already looking at.</p>
+      <div class="feat-chips">
+        <span class="chip">Camera capture</span>
+        <span class="chip">Document scanner</span>
+        <span class="chip">Photo library import</span>
+        <span class="chip">Clipboard paste</span>
+      </div>
     </div>
-    <div class="feat">
-      <div class="feat-icon">🔍</div>
-      <h3>Search Everything</h3>
-      <p>Every word in every snap is full-text searchable. Find any receipt, note, or card in seconds.</p>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">🏷️</div>
-      <h3>Organize with Tabs</h3>
-      <p>Create custom tabs to sort your snaps — receipts, notes, cards, whatever you need.</p>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">🔒</div>
-      <h3>Stays on Your Device</h3>
-      <p>All processing uses Apple's Vision framework locally. Nothing is ever sent to a server.</p>
+    <div class="feat-visual v-capture">
+      <div style="display:flex;align-items:center;height:100%;gap:16px;padding:28px 16px 28px 24px">
+        <div class="mock-phone-frame">
+          <div class="mock-phone-camera"></div>
+          <div class="mock-viewfinder"></div>
+        </div>
+        <div class="capture-options">
+          <div class="capture-opt"><span class="capture-opt-icon">📷</span>Camera</div>
+          <div class="capture-opt" style="border-color:rgba(51,112,255,.3);background:rgba(51,112,255,.12);"><span class="capture-opt-icon">📄</span>Scan Document</div>
+          <div class="capture-opt"><span class="capture-opt-icon">🖼️</span>Choose Photo</div>
+          <div class="capture-opt"><span class="capture-opt-icon">📋</span>Paste Clipboard</div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <div class="privacy-note" style="max-width:520px;margin:56px auto 0;padding:22px 28px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;text-align:center;font-size:13px;color:rgba(255,255,255,0.35);line-height:1.7;">
-    On-device OCR powered by Apple Vision.<br>Your images and text never leave your device.<br><br>
-    <a href="https://skosari.github.io/snapbrief-privacy/" style="color:rgba(255,255,255,0.5);">Privacy Policy →</a>
+  <div class="sep"></div>
+
+  <!-- ── Briefs ── -->
+  <section class="feat-row reverse reveal">
+    <div class="feat-text">
+      <span class="feat-eyebrow">Briefs</span>
+      <h2>Your snap becomes a notebook page.</h2>
+      <p>Every capture has a rich text brief attached — your own private space to write context, findings, action items, or follow-up notes. Bold, highlight, bullet lists, headings.</p>
+      <p>The snap is the reference. The brief is the insight. Together they're a complete, searchable record — like a OneNote page built around the moment you captured.</p>
+      <div class="feat-chips">
+        <span class="chip">Rich text formatting</span>
+        <span class="chip">Highlights &amp; headings</span>
+        <span class="chip">Searchable briefs</span>
+        <span class="chip">Share snap + brief by email</span>
+      </div>
+    </div>
+    <div class="feat-visual v-brief">
+      <div class="mock-brief">
+        <div class="mock-brief-snap-thumb">Captured image</div>
+        <div class="mock-brief-divider"></div>
+        <div class="mock-brief-heading">Q3 Revenue Review</div>
+        <div class="mock-brief-bullets">
+          <div class="mock-brief-bullet">
+            <div class="mock-brief-dot"></div>
+            <div class="mock-brief-line" style="width:90%"></div>
+          </div>
+          <div class="mock-brief-bullet">
+            <div class="mock-brief-dot"></div>
+            <div class="mock-brief-line" style="width:72%"></div>
+          </div>
+          <div class="mock-brief-bullet">
+            <div class="mock-brief-dot"></div>
+            <div class="mock-brief-line" style="width:80%"></div>
+          </div>
+        </div>
+        <div style="background:rgba(255,210,0,.1);border:1px solid rgba(255,210,0,.18);border-radius:6px;padding:7px 10px;">
+          <div class="mock-brief-line" style="width:80%;background:rgba(255,210,0,.25)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- ── iPad ── -->
+  <section class="feat-row reveal">
+    <div class="feat-text">
+      <span class="feat-eyebrow">iPhone &amp; iPad</span>
+      <h2>Every screen. Every orientation.</h2>
+      <p>SnapBrief adapts beautifully to any Apple screen. On iPad, flip to landscape and the full library and detail panel open side-by-side — exactly like working on a Mac, in your hands.</p>
+      <p>Your library syncs seamlessly across iPhone, iPad, and Mac via iCloud so switching devices mid-workflow feels natural.</p>
+      <div class="feat-chips">
+        <span class="chip">iPhone optimised</span>
+        <span class="chip">iPad native layout</span>
+        <span class="chip">Landscape fullscreen view</span>
+        <span class="chip">Sidebar + detail panel</span>
+      </div>
+    </div>
+    <div class="feat-visual v-ipad">
+      <div class="mock-ipad-wrap">
+        <div class="mock-ipad-landscape">
+          <div class="mock-ipad-status">
+            <div class="mock-ipad-status-dot" style="background:#ff5f57"></div>
+            <div class="mock-ipad-status-dot" style="background:#ffbd2e"></div>
+            <div class="mock-ipad-status-dot" style="background:#28c840"></div>
+          </div>
+          <div class="mock-ipad-body">
+            <div class="mock-ipad-sidebar">
+              <div class="mock-ipad-row active">
+                <div class="mock-ipad-row-thumb"></div>
+                <div class="mock-ipad-row-line"></div>
+              </div>
+              <div class="mock-ipad-row">
+                <div class="mock-ipad-row-thumb"></div>
+                <div class="mock-ipad-row-line" style="width:55%"></div>
+              </div>
+              <div class="mock-ipad-row">
+                <div class="mock-ipad-row-thumb"></div>
+                <div class="mock-ipad-row-line" style="width:70%"></div>
+              </div>
+              <div class="mock-ipad-row">
+                <div class="mock-ipad-row-thumb"></div>
+                <div class="mock-ipad-row-line" style="width:40%"></div>
+              </div>
+            </div>
+            <div class="mock-ipad-detail">
+              <div class="mock-ipad-img"></div>
+              <div class="mock-ipad-text-lines">
+                <div class="mock-ipad-text-line" style="width:88%"></div>
+                <div class="mock-ipad-text-line" style="width:72%"></div>
+                <div class="mock-ipad-text-line" style="width:60%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- ── Sync ── -->
+  <section class="feat-row reverse reveal">
+    <div class="feat-text">
+      <span class="feat-eyebrow">iCloud Sync</span>
+      <h2>Snap on your phone. Find it on your Mac.</h2>
+      <p>Everything you capture on iPhone or iPad appears instantly in SnapBrief on your Mac — and vice versa. Start a brief on your phone in a meeting, expand it at your desk.</p>
+      <p>Sync uses your private iCloud container. SnapBrief never touches your data.</p>
+      <div class="feat-chips">
+        <span class="chip">iPhone ↔ iPad ↔ Mac</span>
+        <span class="chip">Private iCloud container</span>
+        <span class="chip">Works offline</span>
+        <span class="chip">Recently Deleted</span>
+      </div>
+    </div>
+    <div class="feat-visual v-sync">
+      <div class="mock-sync">
+        <div class="mock-sync-device">
+          <div class="mock-device-box phone-box">📱</div>
+          <span class="mock-device-label">iPhone</span>
+        </div>
+        <div class="mock-sync-arrow">
+          <div class="mock-sync-line"></div>
+          <div class="mock-cloud-box">☁️</div>
+          <div class="mock-sync-line"></div>
+        </div>
+        <div class="mock-sync-device">
+          <div class="mock-device-box mac-box">💻</div>
+          <span class="mock-device-label">Mac</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- ── Features Grid ── -->
+  <section class="features-section reveal">
+    <h2>Powerful by default.<br>Invisible when you don't need it.</h2>
+    <div class="grid-6">
+      <div class="g-card">
+        <span class="g-icon">🔍</span>
+        <h3>Full-Text Search</h3>
+        <p>Every word from every snap and every brief is instantly searchable. Find any detail in milliseconds.</p>
+      </div>
+      <div class="g-card">
+        <span class="g-icon">🏷️</span>
+        <h3>Tabs &amp; Organisation</h3>
+        <p>Create custom tabs — Receipts, Work, Ideas, Clients. Drag any snap to assign it instantly.</p>
+      </div>
+      <div class="g-card">
+        <span class="g-icon">✉️</span>
+        <h3>Share by Email</h3>
+        <p>Send any snap with its images and brief by email in one tap. Choose which images to include.</p>
+      </div>
+      <div class="g-card">
+        <span class="g-icon">✏️</span>
+        <h3>Annotate</h3>
+        <p>Draw and highlight directly on any captured image. Annotations sync and export with the snap.</p>
+      </div>
+      <div class="g-card">
+        <span class="g-icon">🗑️</span>
+        <h3>Recently Deleted</h3>
+        <p>Deleted snaps move to a 30-day trash bin. Swipe to restore or permanently remove.</p>
+      </div>
+      <div class="g-card">
+        <span class="g-icon">📤</span>
+        <h3>Export &amp; Share</h3>
+        <p>Export as PDF, share images, or save a portable .snapbrief file that opens on Mac too.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Privacy ── -->
+  <section class="privacy-section reveal">
+    <div style="font-size:48px;margin-bottom:20px">🔒</div>
+    <h2>What you capture stays yours.</h2>
+    <p>OCR runs on-device via Apple Vision. Your images, text, and briefs never touch a server — not SnapBrief's, not anyone's. iCloud sync uses your private container only you can access.</p>
+    <a class="privacy-link" href="https://skosari.github.io/snapbrief-privacy/">Privacy Policy →</a>
+  </section>
+
+  <!-- ── Also available ── -->
+  <div class="also-section reveal">
+    <p>Also available for Mac with on-device AI</p>
+    <a class="also-badge" href="https://skosari.github.io/snapbrief-mac-web/">
+      💻 SnapBrief for Mac →
+    </a>
   </div>
+
 </main>
 
 <footer>
-  <p>© 2026 SnapBrief &nbsp;·&nbsp; <a href="https://skosari.github.io/snapbrief-privacy/">Privacy Policy</a> &nbsp;·&nbsp; <a href="https://skosari.github.io/snapbrief-mac-web/">SnapBrief for Mac</a></p>
+  <span class="fl">© 2026 SnapBrief</span>
+  <div class="fr">
+    <a href="https://skosari.github.io/snapbrief-privacy/">Privacy Policy</a>
+    <a href="https://skosari.github.io/snapbrief-mac-web/">Mac</a>
+    <a href="https://apps.apple.com/search?term=snapbrief">App Store</a>
+  </div>
 </footer>
 
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
 </body>
 </html>
